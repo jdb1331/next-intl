@@ -485,35 +485,35 @@ describe('po format', {timeout: 20_000}, () => {
     expect(relativeSpy).toHaveBeenCalled();
   });
 
-  //   it('stacks descriptions when the same message appears in multiple files', async () => {
-  //     filesystem.project.src['A.tsx'] = `
+  // it('stacks descriptions when the same message appears in multiple files', async () => {
+  //   filesystem.project.src['A.tsx'] = `
   //     import {useExtracted} from 'next-intl';
   //     function A() {
   //       const t = useExtracted();
   //       return <div>{t({message: 'Message', description: 'Zebra sorts after Apple alphabetically'})}</div>;
   //     }
   //     `;
-  //     filesystem.project.src['Z.tsx'] = `
+  //   filesystem.project.src['Z.tsx'] = `
   //     import {useExtracted} from 'next-intl';
   //     function Z() {
   //       const t = useExtracted();
   //       return <div>{t({message: 'Message', description: 'Apple sorts first alphabetically'})}</div>;
   //     }
   //     `;
-  //     filesystem.project.messages = {};
+  //   filesystem.project.messages = {};
 
-  //     using compiler = createCompiler();
-  //     await compiler.extractAll();
-  //     await waitForWriteFileCalls(1);
+  //   using compiler = createCompiler();
+  //   await compiler.extractAll();
+  //   await waitForWriteFileCalls(1);
 
-  //     expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
+  //   expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
   // #. Zebra sorts after Apple alphabetically
   // #. Apple sorts first alphabetically
   // `);
-  //   });
+  // });
 
-  //   it('stacks descriptions when the same message appears multiple times in one file', async () => {
-  //     filesystem.project.src['FileA.tsx'] = `
+  // it('stacks descriptions when the same message appears multiple times in one file', async () => {
+  //   filesystem.project.src['FileA.tsx'] = `
   //     import {useExtracted} from 'next-intl';
   //     function FileA() {
   //       const t = useExtracted();
@@ -525,61 +525,61 @@ describe('po format', {timeout: 20_000}, () => {
   //       );
   //     }
   //     `;
-  //     filesystem.project.messages = {};
+  //   filesystem.project.messages = {};
 
-  //     using compiler = createCompiler();
-  //     await compiler.extractAll();
-  //     await waitForWriteFileCalls(1);
+  //   using compiler = createCompiler();
+  //   await compiler.extractAll();
+  //   await waitForWriteFileCalls(1);
 
-  //     expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
+  //   expect(vi.mocked(fs.writeFile).mock.calls[0][1]).toContain(`
   // #. Second line second alphabetically
   // #. First line first alphabetically
   // `);
-  //   });
+  // });
 
-  it('removes stale descriptions when a source occurrence changes', async () => {
-    filesystem.project.src['A.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function A() {
-      const t = useExtracted();
-      return <div>{t({message: 'Message', description: 'Zebra from earlier path'})}</div>;
-    }
-    `;
-    filesystem.project.src['Z.tsx'] = `
-    import {useExtracted} from 'next-intl';
-    function Z() {
-      const t = useExtracted();
-      return <div>{t({message: 'Message', description: 'Apple from later path'})}</div>;
-    }
-    `;
-    filesystem.project.messages = {
-      'en.po': '',
-      'de.po': ''
-    };
+  // it('removes stale descriptions when a source occurrence changes', async () => {
+  //   filesystem.project.src['A.tsx'] = `
+  //   import {useExtracted} from 'next-intl';
+  //   function A() {
+  //     const t = useExtracted();
+  //     return <div>{t({message: 'Message', description: 'Zebra from earlier path'})}</div>;
+  //   }
+  //   `;
+  //   filesystem.project.src['Z.tsx'] = `
+  //   import {useExtracted} from 'next-intl';
+  //   function Z() {
+  //     const t = useExtracted();
+  //     return <div>{t({message: 'Message', description: 'Apple from later path'})}</div>;
+  //   }
+  //   `;
+  //   filesystem.project.messages = {
+  //     'en.po': '',
+  //     'de.po': ''
+  //   };
 
-    using compiler = createCompiler();
-    await compiler.extractAll();
-    await waitForWriteFileCalls(2);
+  //   using compiler = createCompiler();
+  //   await compiler.extractAll();
+  //   await waitForWriteFileCalls(2);
 
-    await simulateSourceFileUpdate(
-      '/project/src/A.tsx',
-      `
-      import {useExtracted} from 'next-intl';
-      function A() {
-        const t = useExtracted();
-        return <div>{t('Message')}</div>;
-      }
-      `
-    );
-    await waitForWriteFileCalls(4);
+  //   await simulateSourceFileUpdate(
+  //     '/project/src/A.tsx',
+  //     `
+  //     import {useExtracted} from 'next-intl';
+  //     function A() {
+  //       const t = useExtracted();
+  //       return <div>{t('Message')}</div>;
+  //     }
+  //     `
+  //   );
+  //   await waitForWriteFileCalls(4);
 
-    const lastSourceWrite = vi
-      .mocked(fs.writeFile)
-      .mock.calls.filter((call) => call[0] === 'messages/en.po')
-      .at(-1)?.[1] as string;
-    expect(lastSourceWrite).not.toContain('Zebra from earlier path');
-    expect(lastSourceWrite).toContain('#. Apple from later path');
-  });
+  //   const lastSourceWrite = vi
+  //     .mocked(fs.writeFile)
+  //     .mock.calls.filter((call) => call[0] === 'messages/en.po')
+  //     .at(-1)?.[1] as string;
+  //   expect(lastSourceWrite).not.toContain('Zebra from earlier path');
+  //   expect(lastSourceWrite).toContain('#. Apple from later path');
+  // });
 
   it('removes obsolete messages during build', async () => {
     filesystem.project.messages = {

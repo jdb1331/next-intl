@@ -407,12 +407,13 @@ export default class CatalogManager implements Disposable {
     const conflicts: string[] = [];
     const formatRef = (ref: typeof first.reference) =>
       ref ? `${ref.path}:${ref.line}:${ref.column}` : 'unknown';
+    const normDesc = (d: unknown) => (d == null ? null : d);
 
     for (let i = 1; i < sourceMessages.length; i++) {
       const current = sourceMessages[i];
       if (
         current.message !== first.message ||
-        current.description !== first.description
+        normDesc(current.description) !== normDesc(first.description)
       ) {
         conflicts.push(
           `  - ${formatRef(current.reference)} (message: "${current.message}", description: ${current.description ? `"${current.description}"` : 'none'})`
