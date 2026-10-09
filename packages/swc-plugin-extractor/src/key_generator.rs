@@ -10,9 +10,7 @@ impl KeyGenerator {
         hasher.update(message.as_bytes());
 
         if let Some(desc) = description {
-            // Include a delimiter like `:` or `\0` to prevent collisions
-            // e.g. ("foo", "bar") vs ("foob", "ar")
-            hasher.update(b":");
+            hasher.update(b"\0");
             hasher.update(desc.as_bytes());
         }
 
